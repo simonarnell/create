@@ -234,7 +234,7 @@ beo.bus.on('dsp', function(event) {
 	if (event.header == "metadata") {
 		
 		if (event.content.metadata) {
-			metadata = event.content.metadata;
+			metadata = beoDSP.enrichDSPMetadata(event.content.metadata);
 			
 			if (metadata.sampleRate) {
 				Fs = parseInt(metadata.sampleRate.value[0]);

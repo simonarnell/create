@@ -56,7 +56,7 @@ beo.bus.on('dsp', function(event) {
 	if (event.header == "metadata") {
 		
 		if (event.content.metadata) {
-			metadata = event.content.metadata;
+			metadata = beoDSP.enrichDSPMetadata(event.content.metadata);
 			if (metadata.canBecomeDaisyChainSlaveRegister) {
 				beoDSP.writeDSP(metadata.canBecomeDaisyChainSlaveRegister.value[0], 0, false);
 				// Prevent this amplifier from being in slave mode when connected to the Pi.

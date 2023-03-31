@@ -96,7 +96,7 @@ var fetch = require("node-fetch");
 			alsaDSPVolumeControlAvailable = false;
 			
 			if (event.content.metadata) {
-				metadata = event.content.metadata;
+				metadata = beoDSP.enrichDSPMetadata(event.content.metadata);
 				if (metadata.volumeControlRegister) {
 					/*beoDSP.readDSP(metadata.volumeControlRegister.value[0], function(response) {
 						volumeValue = Math.round(beoDSP.convertVolume("amplification", "%", response.dec));

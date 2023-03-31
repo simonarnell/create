@@ -63,7 +63,8 @@ var dsp = module.exports = {
 	peak: peak,
 	lowShelf: lowShelf,
 	highShelf: highShelf,
-	convertVolume: convertVolume
+	convertVolume: convertVolume,
+	enrichDSPMetadata: enrichDSPMetadata
 };
 
 
@@ -741,6 +742,13 @@ function getSigmaReadResponse(rawDataResponse) {
 		readResponse.dec = resultValInt / m_FullScaleIntValue;
 	}
 	return readResponse;
+}
+
+function enrichDSPMetadata(metadata) {
+	if ((!metadata.sampleRate) && (metadata.samplerate)) {
+		metadata.sampleRate = metadata.samplerate;
+	}
+	return metadata;
 }
 
 

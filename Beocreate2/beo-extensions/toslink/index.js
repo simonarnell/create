@@ -96,7 +96,7 @@ var beoDSP = require('../../beocreate_essentials/dsp');
 		if (event.header == "metadata") {
 			
 			if (event.content.metadata) {
-				metadata = event.content.metadata;
+				metadata = beoDSP.enrichDSPMetadata(event.content.metadata);
 				
 				if (metadata.enableSPDIFRegister && metadata.enableSPDIFRegister.value) {
 					canControlToslink.enabled = true;

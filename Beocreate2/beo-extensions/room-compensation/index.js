@@ -21,6 +21,7 @@ const exec = require("child_process").exec;
 const fs = require("fs");
 const path = require("path");
 const fetch = require("node-fetch");
+var beoDSP = require('../../beocreate_essentials/dsp');
 
 var version = require("./package.json").version;
 var arcDirectory = beo.dataDirectory+"/beo-room-compensation"; // Sound presets directory.
@@ -171,8 +172,9 @@ beo.bus.on('room-compensation', function(event) {
 beo.bus.on('dsp', function(event) {
 	if (event.header == "metadata") {
 		if (event.content.metadata) {
-			if (event.content.metadata.sampleRate) {
-				Fs = parseInt(event.content.metadata.sampleRate.value[0]);
+			metadata = beoDSP.enrichDSPMetadata(event.content.metadata);
+			if (metadata.sampleRate) {
+				Fs = parseInt(metadata.sampleRate.value[0]);
 			} else {
 				Fs = null;
 			}

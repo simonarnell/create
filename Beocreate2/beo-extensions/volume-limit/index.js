@@ -135,7 +135,7 @@ var beoDSP = require('../../beocreate_essentials/dsp');
 		if (event.header == "metadata") {
 			
 			if (event.content.metadata) {
-				metadata = event.content.metadata;
+				metadata = beoDSP.enrichDSPMetadata(event.content.metadata);
 				
 				canControlVolumeLimit.volumeLimitPi = (metadata.volumeLimitPiRegister && metadata.volumeLimitPiRegister.value[0] != undefined) ? true : false;
 				canControlVolumeLimit.volumeLimitSPDIF = (metadata.volumeLimitSPDIFRegister && metadata.volumeLimitSPDIFRegister.value[0] != undefined) ? true : false;

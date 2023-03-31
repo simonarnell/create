@@ -314,7 +314,7 @@ beo.bus.on('dsp', function(event) {
 	if (event.header == "metadata") {
 		
 		if (event.content.metadata) {
-			metadata = event.content.metadata;
+			metadata = beoDSP.enrichDSPMetadata(event.content.metadata);
 			
 			for (var c = 0; c < 4; c++) {
 				channel = "abcd".charAt(c);
