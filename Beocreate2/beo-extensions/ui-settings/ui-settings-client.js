@@ -11,9 +11,8 @@ var settings = {
 	screensaverTimeout: 5
 }
 let timer = null;
-//current localbrowser user agent is 'Mozilla/5.0 (X11; Linux armv7l) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0 Safari/605.1.15'
-let screensaverEnabled = navigator.userAgent.indexOf('(X11; Linux armv7l)') >= 0 && navigator.userAgent.indexOf(' (KHTML, like Gecko) Version/13.0 Safari') >= 0;
-//var screensaverEnabled = 1; // Screensaver on any platform (for testing purposes).
+// Enable screensaver fpor all Linux X11 ARM devices
+let screensaverEnabled = navigator.userAgent.indexOf('X11; Linux arm') >= 0;
 
 var externalDisplayOn = false;
 $(document).on("general", function(event, data) {
