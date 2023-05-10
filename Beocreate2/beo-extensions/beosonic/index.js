@@ -524,9 +524,9 @@ interact = {
 					}
 				}
 			} else {
-				if (compactPresetList[triggerResult]) {
-					applyBeosonicPreset(triggerResult);
-					return compactPresetList[triggerResult].presetName;
+				if (compactPresetList[interactData.preset]) {
+					applyBeosonicPreset(interactData.preset);
+					return compactPresetList[interactData.preset].presetName;
 				} else {
 					return undefined;
 				}
