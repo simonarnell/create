@@ -1,6 +1,6 @@
 {
-  "name": "@pmdroid/plexamp",
-  "version": "0.6.0",
+  "name": "@beocreate/plexamp",
+  "version": "0.1.0",
   "description": "Control for Plexamp in Beocreate systems",
   "main": "index.js",
   "scripts": {
@@ -12,7 +12,7 @@
   },
   "keywords": [
     "beocreate",
-    "snapcast"
+    "plexamp"
   ],
   "author": "Bang & Olufsen",
   "license": "MIT",
