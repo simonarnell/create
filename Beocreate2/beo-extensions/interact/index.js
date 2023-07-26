@@ -211,7 +211,7 @@ function stopSerialPort() {
 
 
 function serialSend(message, newLine = true) {
-	if (newLine) message += "\n";
+	if (newLine) message += "\r\n";
 	if (port) port.write(message, function(err) {
 		if (err) {
 			console.error('Interact: serial port write error: ', err.message);
