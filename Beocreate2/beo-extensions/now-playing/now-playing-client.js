@@ -177,8 +177,7 @@ var nowPlayingController = new Vue({
 						}
 						break;
 				}
-			} else if ((event.target.src == encodeURI(this.picture)) ||
-					   (event.target.src == decodeURIComponent(encodeURI(this.picture)))) {
+			} else {
 				switch (this.extPictureMode) {
 					case "always":
 						if (!this.extPicture) switchView = true;
