@@ -156,7 +156,8 @@ var nowPlayingController = new Vue({
 				this.pictureBSuccess = true;
 			}
 			var switchView = false;
-			if (event.target.src == encodeURI(this.extPicture)) {
+			if ((event.target.src == encodeURI(this.extPicture)) ||
+			    (event.target.src == decodeURIComponent(encodeURI(this.extPicture)))) {
 				switch (this.extPictureMode) {
 					case "always":
 						switchView = true;
@@ -176,7 +177,8 @@ var nowPlayingController = new Vue({
 						}
 						break;
 				}
-			} else if (event.target.src == encodeURI(this.picture)) {
+			} else if ((event.target.src == encodeURI(this.picture)) ||
+					   (event.target.src == decodeURIComponent(encodeURI(this.picture)))) {
 				switch (this.extPictureMode) {
 					case "always":
 						if (!this.extPicture) switchView = true;
@@ -199,7 +201,10 @@ var nowPlayingController = new Vue({
 				}
 			}
 			if (switchView) {
-				this.pictureView = view;
+				console.log("Switching image")
+				this.pictureView = view; 
+			} else {
+				console.log("Not switching image")
 			}
 		},
 		pictureError: function(event, view) {
