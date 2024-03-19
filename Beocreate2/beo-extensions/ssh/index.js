@@ -163,7 +163,7 @@ var fs = require("fs");
 					break;
 			}
 			if (algorithm) {
-				exec("mkpasswd --method="+algorithm+" --salt="+shadow.passwordSalt+" "+password, function(error, stdout, stderr) {
+				exec("mkpasswd --method="+algorithm+" --salt="+shadow.passwordSalt+" \""+password+"\"", function(error, stdout, stderr) {
 					if (error) {
 						console.error("Failed to generate a password hash to check: "+error);
 						if (callback) callback(false, error);
