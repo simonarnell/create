@@ -5,9 +5,9 @@ sshPasswordChanged = false;
 
 $(document).on("general", function(event, data) {
 	
-	if (data.header == "activatedExtension") {
+	if (data.header == "status") {
 		if (data.content.extension == "ssh") {
-			$("#ssh-example-address").text(document.domain);
+			console.log(data);
 		}
 	}
 	
