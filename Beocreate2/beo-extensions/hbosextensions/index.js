@@ -3,6 +3,8 @@
 var execSync = require("child_process").execSync;
 var exec = require("child_process").exec;
 var fs = require("fs");
+const axios = require('axios');
+const cheerio = require('cheerio');
 
 var debug = beo.debug;
 var version = require("./package.json").version;
@@ -80,6 +82,12 @@ beo.bus.on('hbosextensions', function(event) {
 		beo.sendToUI("hbosextensions", {header: "processState", content: {"state": "Stopping "+ext.fullname}});
                 modifyExtension(event.content.name,"stop");
 		updateUI();
+        }
+	if (event.header == "update") {
+                ext = getExtensionData(event.content.name);
+                beo.sendToUI("hbosextensions", {header: "processState", content: {"state": "Updating "+ext.fullname}});
+                modifyExtension(event.content.name,"update");
+                updateUI();
         }
 	if (event.header == "cleanup") {
 		beo.sendToUI("hbosextensions", {header: "processState", content: {"state": "Removing unused data"}});
@@ -162,9 +170,9 @@ function parseExtensionsConfig(filePath,clear) {
 				tags = execSync("git describe --tags --abbrev=0",options).toString().trim();
 			} catch (error) { }
 			if (tags == "") {
-				ext.version="unknown version"
+				ext.version="unknown"
 			} else {
-			        ext.version = tags;
+			        ext.version = cleanupVersion(tags);
 			}
     		} catch (err) { 
 			ext.version = "not installed"
@@ -175,7 +183,8 @@ function parseExtensionsConfig(filePath,clear) {
 
 	console.log(extensions);
 
-        // Return the extensions array
+	checkGithubVersions();
+
         return true;
     } catch (error) {
         // Return the error if any
@@ -208,23 +217,124 @@ function updateExtensionStatus() {
 }
 
 
-function modifyExtension(extensionName,extensionCommand) {
+function compareVersions(version1, version2) {
+    // Split version strings into arrays of numeric parts
+    const parts1 = version1.substring(1).split('.').map(Number);
+    const parts2 = version2.substring(1).split('.').map(Number);
+
+    // Compare each numeric part
+    for (let i = 0; i < Math.max(parts1.length, parts2.length); i++) {
+        const part1 = parts1[i] || 0;
+        const part2 = parts2[i] || 0;
+
+        if (part1 < part2) {
+            return -1;
+        } else if (part1 > part2) {
+            return 1;
+        }
+    }
+
+    // If all parts are equal, versions are equal
+    return 0;
+}
+
+
+function parseGithubUrl(url) {
+    // Parse the URL
+    const parsedUrl = new URL(url);
+
+    // Split the pathname component of the URL
+    const pathComponents = parsedUrl.pathname.split('/').filter(Boolean);
+
+    // Extract owner and repository name
+    const owner = pathComponents[0];
+    const repo = pathComponents[1];
+
+    // Extract branch (default to 'master' if not specified)
+    const branch = pathComponents[2] || 'master';
+
+    return { owner, repo };
+}
+
+
+async function checkGithubVersions() {
+    try {
+        const fetchPromises = extensions.map(async (ext) => {
+            const { owner, repo } = parseGithubUrl(ext.repository);
+            let tag = "";
+            try {
+        	// Fetch GitHub tags page HTML
+        	const response = await axios.get(`https://github.com/${owner}/${repo}/tags`);
+
+        	// Load HTML content into Cheerio
+        	const $ = cheerio.load(response.data);
+
+        	// Extract tag names
+        	const tags = [];
+        	$('a[href^="/' + owner + '/' + repo + '/releases/tag/"]').each((index, element) => {
+            		const tagName = $(element).text().trim();
+            		tags.push(tagName);
+        	});
+
+		const version = tags.find(str => str.toLowerCase().startsWith('v'));
+		ext.githubversion=cleanupVersion(version);
+
+		if ((ext.version != "not installed") && compareVersions(ext.githubversion,ext.version)==1) {
+			ext.updateAvailable=true;
+		} else {
+			ext.updateAvailable=false;
+		}
+
+            } catch (error) {
+                console.error("Error:", error);
+            }
+            return tag;
+        });
+
+        // Wait for all fetches to complete
+        const tags = await Promise.all(fetchPromises);
+	console.log(extensions);
+    } catch (error) {
+        console.error("Error:", error);
+    } 
+    updateUI();
+}
+
+
+function modifyExtension(extensionName, extensionCommand, reportError = true) {
     const escapedName = encodeURIComponent(extensionName);
 
     // Construct the command to call /bin/xxx with the argument x
     const command = `/opt/hifiberry/bin/extensions ${extensionCommand} ${escapedName}`;
 
-    // Execute the command
-    execSync(command, (error, stdout, stderr) => {
-        if (error) {
-            console.error(`Error executing command: ${error.message}`);
-            return;
+    try {
+        // Execute the command
+        const stdout = execSync(command);
+
+        // If the command is successful, stdout will contain the output
+        console.log(`Command output: ${stdout.toString()}`);
+    } catch (error) {
+        // Catch and handle the error
+        console.error(`Error executing command: ${error.message}`);
+        // Optionally, handle error.stdout and error.stderr if needed
+	message="";
+        if (error.stdout) {
+            message += error.stdout	   
+            console.log(`Stdout: ${error.stdout.toString()}`);
         }
-        if (stderr) {
-            console.error(`Command stderr: ${stderr}`);
-            return;
+        if (error.stderr) {
+	    message += error.stdout
+            console.error(`Stderr: ${error.stderr.toString()}`);
         }
-    });
+	if (reportError) {
+	    beo.sendToUI("hbosextensions", {header: "error", content: {"message": message}});
+	    setTimeout(() => {
+		    console.log("error");
+            }, 10000); 
+            console.log("error");
+        }
+
+    }
 }
 
 // Function to convert bytes to human-readable format
@@ -295,14 +405,18 @@ function getSizeMultiplier(unit) {
     }
 }
 
-function startExtension(name) {
-    modifyExtension(name,"start");
-}
+function cleanupVersion(str) {
+    if (!str) {
+        return '';
+    }
 
-function stopExtension(name) {
-    modifyExtension(name,"stop");
+    if (str.startsWith('v') || str.startsWith('V')) {
+        // Remove the first character
+        return str.substring(1);
+    }
+    // Return the original string if it doesn't start with 'v' or 'V'
+    return str;
 }
-
 
 module.exports = {
 	version: version,
