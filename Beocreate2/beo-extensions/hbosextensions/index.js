@@ -366,7 +366,11 @@ function getDockerSizes() {
             imageSize: bytesToHumanReadable(totalImageSize)
         };
     } catch (error) {
-        throw new Error("Error getting Docker sizes: " + error.message);
+        console.error("Error getting Docker sizes: " + error.message);
+	return {
+            containerSize: "unknown",
+            imageSize: "unknown" 
+        };
     }
 }
 
