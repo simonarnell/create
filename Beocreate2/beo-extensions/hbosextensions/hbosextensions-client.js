@@ -45,14 +45,20 @@ function generateMenu(extensionList) {
 	    console.log(ext);
 	let extToggle = `${ext.name.toLowerCase().replace(' ', '-')}-toggle`;
 	let menuDescription = document.createElement("p");
-	infoStr = ext.description + " (";
+	menuDescription.textContent = ext.description + " (";
 
+	let version = document.createElement("a");
 	if (ext.version=="not installed") {
-            infoStr += "not installed";
-	} else {
-	    infoStr += ext.version + " installed";
+            version.textContent = "not installed";
+        } else {
+            version.textContent = ext.version + " installed";
         }
-	menuDescription.textContent = infoStr+")";
+	infoUrl = ext.info ? ext.info : ext.repository;
+        version.setAttribute("href", infoUrl);	
+	version.setAttribute("target", "_blank");
+
+        menuDescription.appendChild(version);
+        menuDescription.appendChild(document.createTextNode(")"));
 
         let menuItem = document.createElement("div");
         menuItem.classList.add("menu-item", "toggle");
