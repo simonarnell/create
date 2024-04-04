@@ -425,8 +425,6 @@ function matchAudioControlSourceToExtension(acSource, data = null) {
     var extension = null;
     var childSource = null;
 
-	console.log(acSource)
-
     if (acSource) {
         acSource = acSource.toLowerCase();
         if (allSources[acSource]) {
@@ -444,8 +442,6 @@ function matchAudioControlSourceToExtension(acSource, data = null) {
                     aka = aka.map(a => a ? a.toLowerCase() : ''); // Normalize each element to lowercase
                 }	
 
-		    console.log(aka)
-                
                 // Check if acSource matches any of the aka values
                 if (aka.indexOf(acSource) !== -1) {
                     extension = source;
