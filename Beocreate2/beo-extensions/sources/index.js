@@ -421,31 +421,47 @@ function processAudioControlMetadata(metadata) {
 }
 
 function matchAudioControlSourceToExtension(acSource, data = null) {
-	// Determine which extension this belongs to.
-	var extension = null;
-	var childSource = null;
-	if (acSource) {
-		if (allSources[acSource.toLowerCase()]) {
-			extension = acSource.toLowerCase();
-			if (allSources[extension].determineChildSource) {
-				childSource = allSources[extension].determineChildSource(data);
-			}
-		} else {
-			for (source in allSources) {
-				if (allSources[source].aka && allSources[source].aka.indexOf(acSource) != -1) {
-					extension = source;
-					if (allSources[extension].determineChildSource) {
-						childSource = allSources[extension].determineChildSource(data);
-					}
-					break;
-				}
-			}
-			if (!extension) extension = "bluetooth"; // Bluetooth sources can have various names.
-		}
-	}
-	return [extension, childSource];
-}
+    // Determine which extension this belongs to.
+    var extension = null;
+    var childSource = null;
 
+	console.log(acSource)
+
+    if (acSource) {
+        acSource = acSource.toLowerCase();
+        if (allSources[acSource]) {
+            extension = acSource;
+            if (allSources[extension].determineChildSource) {
+                childSource = allSources[extension].determineChildSource(data);
+            }
+        } else {
+            for (let source in allSources) {
+                // Handle aka being undefined, a single string, or an array
+                let aka = allSources[source].aka || [];
+                if (typeof aka === 'string') {
+                    aka = [aka.toLowerCase()]; // Normalize and wrap in an array if it's a string
+                } else if (Array.isArray(aka)) {
+                    aka = aka.map(a => a ? a.toLowerCase() : ''); // Normalize each element to lowercase
+                }	
+
+		    console.log(aka)
+                
+                // Check if acSource matches any of the aka values
+                if (aka.indexOf(acSource) !== -1) {
+                    extension = source;
+                    if (allSources[extension].determineChildSource) {
+                        childSource = allSources[extension].determineChildSource(data);
+                    }
+                    break;
+                }
+            }
+        }
+        if (!extension) {
+            extension = "bluetooth"; // Default to "bluetooth" if no extension matches
+        }
+    }
+    return [extension, childSource];
+}
 
 // TRANSPORT
 
