@@ -86,8 +86,10 @@ beo.bus.on('hbosextensions', function(event) {
 	if (event.header == "update") {
                 ext = getExtensionData(event.content.name);
                 beo.sendToUI("hbosextensions", {header: "processState", content: {"state": "Updating "+ext.fullname}});
-                modifyExtension(event.content.name,"update");
-                updateUI();
+                modifyExtension(event.content.name,"uninstall");
+		modifyExtension(event.content.name,"install");
+		// the UI code might have been changed, restart the UI
+		process.exit();
         }
 	if (event.header == "cleanup") {
 		beo.sendToUI("hbosextensions", {header: "processState", content: {"state": "Removing unused data"}});
