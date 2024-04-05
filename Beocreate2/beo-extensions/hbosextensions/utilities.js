@@ -123,9 +123,17 @@ function getExtensionStatus(serviceName, callback) {
  *       and be executable on the system.
  */
 function setExtensionStatus(serviceName, action, callback) {
+
+    // Map true to 'start' and false to 'stop'
+    if (action === true) {
+        action = 'start';
+    } else if (action === false) {
+        action = 'stop';
+    }
+
     // Validate the action parameter
     if (!['start', 'stop', 'restart'].includes(action)) {
-        console.error('Invalid action specified. Expected "start", "stop", or "restart".');
+        console.error('Invalid action %s specified. Expected "start", "stop", or "restart".', action);
         return callback(false, true);
     }
 
