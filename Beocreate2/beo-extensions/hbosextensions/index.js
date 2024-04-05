@@ -160,8 +160,6 @@ function parseExtensionsConfig(filePath,clear) {
             extensions.push(extension);
         }
 
-	    console.log(extensions);
-
 	for (ext of extensions) {
 		const dir = extensionDir + ext.name;
 		try {
@@ -169,7 +167,7 @@ function parseExtensionsConfig(filePath,clear) {
 			const options = { cwd: dir };
 			tags = "";
 			try {
-				tags = execSync("git describe --tags --abbrev=0",options).toString().trim();
+				tags = execSync("git describe --tags `git rev-list --tags --max-count=1`",options).toString().trim();
 			} catch (error) { }
 			if (tags == "") {
 				ext.version="unknown"
