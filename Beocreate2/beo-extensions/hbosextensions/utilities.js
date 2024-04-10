@@ -159,6 +159,7 @@ function setExtensionStatus(serviceName, action, callback) {
  * Restarts the specified service by stopping and then starting it if it is currently running.
  * @param {string} serviceName - The name of the service to be restarted.
  * @param {Function} callback - A callback function to be called after the restart operation completes.
+ *  Parameter to callback is a boolean that's true if everything is ok, false otherwise
  */
 function restartExtension(serviceName, callback) {
     exec(`/opt/hifiberry/bin/extensions status ${serviceName}`, (error, stdout, stderr) => {
@@ -172,24 +173,44 @@ function restartExtension(serviceName, callback) {
                 if (error) {
                     console.error(`Error stopping the service: ${error}`);
                     settings[`${serviceName}Enabled`] = false;
-                    return callback(false, true);
+                    try {
+                        // Attempt to run the callback function
+                        callback(false);
+                    } catch (error) {
+                        console.error("An error occurred during callback execution:", error);
+                    }
                 }
                 // If stopping is successful, start the service
                 exec(`/opt/hifiberry/bin/extensions start ${serviceName}`, (error, stdout, stderr) => {
                     if (error) {
                         console.error(`Error starting the service: ${error}`);
                         settings[`${serviceName}Enabled`] = false;
-                        return callback(false, true);
+                        try {
+                            // Attempt to run the callback function
+                            callback(false);
+                        } catch (error) {
+                            console.error("An error occurred during callback execution:", error);
+                        }
                     }
                     settings[`${serviceName}Enabled`] = true;
                     if (debug) console.log(`${serviceName} restarted.`);
-                    callback(true, false);
+                    try {
+                        // Attempt to run the callback function
+                        callback(true);
+                    } catch (error) {
+                        console.error("An error occurred during callback execution:", error);
+                    }
                 });
             });
         } else {
             // Service is not running, no need to restart it
             if (debug) console.log(`${serviceName} is not currently running.`);
-            callback(false, false);
+            try {
+                // Attempt to run the callback function
+                callback(true);
+            } catch (error) {
+                console.error("An error occurred during callback execution:", error);
+            }
         }
     });
 }
