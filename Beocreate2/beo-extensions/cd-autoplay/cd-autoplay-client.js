@@ -1,8 +1,7 @@
 var cd_autoplay = (function() {
-
 	var cdAutoplayEnabled = false;
 
-	$(document).on("cd-autplay", function(_, data) {
+	$(document).on("cd-autoplay", function(event, data) {
 		if (data.header == "cdAutoplaySettings") {
 			if (data.content.cdAutoplayEnabled) {
 				cdAutoplayEnabled = true;
@@ -15,7 +14,6 @@ var cd_autoplay = (function() {
 			beo.notify(false, "cd-autoplay");
 		}
 	});
-
 
 	function toggleEnabled() {
 		enabled = (!cdAutoplayEnabled) ? true : false;
@@ -30,5 +28,4 @@ var cd_autoplay = (function() {
 	return {
 		toggleEnabled: toggleEnabled,
 	};
-
 })();

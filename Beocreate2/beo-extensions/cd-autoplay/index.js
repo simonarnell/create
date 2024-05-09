@@ -21,17 +21,13 @@ var debug = beo.debug;
 var version = require("./package.json").version;
 
 var settings = {
-	cdAutoplayEnabled: false,
-}
+	cdAutoplayEnabled: false
+};
 
 var sources = null;
 
-var cdAutoplayEnabled = false;
-
 beo.bus.on('general', function(event) {
-
 	if (event.header == "startup") {
-
 		if (beo.extensions.sources &&
 			beo.extensions.sources.setSourceOptions &&
 			beo.extensions.sources.sourceDeactivated) {
@@ -44,7 +40,7 @@ beo.bus.on('general', function(event) {
 					enabled: enabled,
 					transportControls: true,
 					usesHifiberryControl: true,
-					aka: "cdAutoplay"
+					aka: "mpd-cd-autoplay"
 				});
 			});
 		}
@@ -67,7 +63,6 @@ beo.bus.on('cd-autoplay', function(event) {
 	if (event.header == "cdAutoplayEnabled") {
 		if (event.content.enabled != undefined) {
 			setCdAutoplayStatus(event.content.enabled, function(newStatus, error) {
-				settings.cdAutoplayEnabled = newStatus
 				beo.bus.emit("ui", { target: "cd-autoplay", header: "cdAutoplaySettings", content: settings });
 				if (sources) sources.setSourceOptions("cd-autoplay", { enabled: newStatus });
 				if (newStatus == false) {
@@ -84,10 +79,10 @@ beo.bus.on('cd-autoplay', function(event) {
 function getCdAutoplayStatus(callback) {
 	exec("systemctl is-enabled --quiet mpd-cd-autoplay.service").on('exit', function(code) {
 		if (code == 0) {
-			cdAutoplayEnabled = true;
+			settings.cdAutoplayEnabled = true;
 			callback(true);
 		} else {
-			cdAutoplayEnabled = false;
+			settings.cdAutoplayEnabled = false;
 			callback(false);
 		}
 	});
@@ -97,17 +92,17 @@ function setCdAutoplayStatus(enabled, callback) {
 	if (enabled) {
 		exec("systemctl unmask mpd-cd-autoplay.service").on('exit', function(code) {
 			if (code == 0) {
-				cdAutoplayEnabled = true;
+				settings.cdAutoplayEnabled = true;
 				if (debug) console.log("cd-autoplay enabled.");
 				callback(true);
 			} else {
-				cdAutoplayEnabled = false;
+				settings.cdAutoplayEnabled = false;
 				callback(false, true);
 			}
 		});
 	} else {
 		exec("systemctl mask mpd-cd-autoplay.service").on('exit', function(code) {
-			cdAutoplayEnabled = false;
+			settings.cdAutoplayEnabled = false;
 			if (code == 0) {
 				callback(false);
 				if (debug) console.log("cd-autoplay disabled.");
