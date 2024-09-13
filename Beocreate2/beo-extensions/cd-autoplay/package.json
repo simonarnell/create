@@ -1,0 +1,26 @@
+{
+  "name": "@beocreate/cd-autoplay",
+  "version": "0.1.0",
+  "description": "Controls for Automatic CD playback via MPD",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bang-olufsen/create.git"
+  },
+  "keywords": [
+    "beocreate",
+    "mpd",
+    "CD",
+    "compact disc"
+  ],
+  "author": "Bang & Olufsen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bang-olufsen/create/issues"
+  },
+  "homepage": "https://github.com/bang-olufsen/create#readme",
+  "dependencies": {}
+}

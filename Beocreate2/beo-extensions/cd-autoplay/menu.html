@@ -1,0 +1,21 @@
+<div class="menu-screen source" id="cd-autoplay" data-icon="cd.svg" data-menu-title="Compact Disc">
+	
+	<header>
+		<div class="back-button master"></div>
+		<h1>Compact Disc</h1>
+	</header>
+	
+	<div class="scroll-area">
+		<div class="menu-content">
+			<div class="menu-item toggle" id="cd-autoplay-enabled-toggle" onclick="cd_autoplay.toggleEnabled();">
+				<div class="menu-label">On</div>
+				<div class="menu-toggle"></div>
+			</div>
+			<p>Automatically play CDs when they are inserted.</p>
+			<p>Requires a CD compatible drive to be attached to the system. CD metadata is sourced from the <a href="https://musicbrainz.org" target="_blank">MusicBrainz</a> database.</p>
+			<p class="experiment">This is an experimental feature.</p>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript" charset="utf-8" src="€/cd-autoplay-client.js"></script>
