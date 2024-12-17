@@ -1,7 +1,7 @@
 {
-  "name": "@beocreate/snapcast",
-  "version": "0.6.0",
-  "description": "Control for Snapcast in Beocreate systems",
+  "name": "@beocreate/privacy",
+  "version": "0.6.1",
+  "description": "Privacy controls for Beocreate systems",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,13 +12,15 @@
   },
   "keywords": [
     "beocreate",
-    "snapcast"
+    "privacy",
+	"audio",
+	"bang",
+	"olufsen"
   ],
   "author": "Bang & Olufsen",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/bang-olufsen/create/issues"
   },
-  "homepage": "https://github.com/bang-olufsen/create#readme",
-  "dependencies": {}
+  "homepage": "https://github.com/bang-olufsen/create#readme"
 }

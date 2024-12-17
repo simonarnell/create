@@ -1,0 +1,38 @@
+<div class="menu-screen setup-large-title" id="hbosextensions" data-icon="extension.svg" data-menu-title="Extensions" data-built-in="1" data-context="general-settings/more">
+	
+	<header>
+		<div class="back-button master setup"></div>
+		<h1>Extensions</h1>
+	</header>
+	
+	<div class="scroll-area">
+		<div class="menu-content" id="extensions-menu">
+		</div>
+
+		<div class="menu-content" id="extensions-docker">
+			<div class="menu-item static two-rows">
+			<div class="first-row">
+				<div class="menu-text-wrap">
+				<div class="menu-label">Docker containers</div>
+			</div>
+			</div>
+			<div class="menu-custom-markup"><p id="containersize">0B</p></div></div>
+
+			<div class="menu-item static two-rows">
+                        <div class="first-row">
+                                <div class="menu-text-wrap">
+                                <div class="menu-label">Docker images</div>
+                        </div>
+                        </div>
+                        <div class="menu-custom-markup"><p id="imagesize">0B</p></div></div>
+			<div class="button pill black" onclick="hbosextensions.cleanup();" id="cleanup-button">Cleanup unused data</div>
+
+
+                </div>
+	</div>
+
+
+	
+</div>
+
+<script type="text/javascript" charset="utf-8" src="€/hbosextensions-client.js"></script>

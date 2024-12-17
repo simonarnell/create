@@ -296,6 +296,7 @@ var expressServer = express(); // Create Express instance.
 global.beo = {
 	bus: beoBus,
 	systemDirectory: systemDirectory+"/..",
+	extensionDirectory: systemDirectory+"/../beo-extensions",
 	dataDirectory: dataDirectory,
 	customisationDirectory: systemConfiguration.customisationPath,
 	systemVersion: systemVersion,
@@ -711,27 +712,52 @@ function shouldLoadExtension(mode, extensionName, userExtension, menuName = null
 	
 	if (!shouldIncludeExtension) return false;
 	
+
+if (mode == 0) {
+    let moduleLoaded = false;
+    fullPath = paths[0];
+    try {
+        require.resolve(fullPath);
+        moduleLoaded = true; // Module found and can be loaded without syntax errors
+    } catch (error) {
+        if (error.code === 'MODULE_NOT_FOUND') {
+            // Attempt to resolve from the second path if the first fails due to the module not being found
+            fullPath = paths[1];
+            try {
+                require.resolve(fullPath);
+                moduleLoaded = true; // Module found in the second path and can be loaded without syntax errors
+            } catch (secondError) {
+                if (secondError.code === 'MODULE_NOT_FOUND') {
+                    if (debugMode) {
+                        console.log(`Extension '${extensionName}' could not be found.`);
+                    }
+                } else {
+                    // Syntax error or other issue in the module from the second path
+                    if (debugMode) {
+                        console.error(`Extension '${extensionName}' encountered an error during loading:`, secondError);
+                    }
+                }
+            }
+        } else {
+            // Syntax error or other issue in the module from the first path
+            if (debugMode) {
+                console.error(`Extension '${extensionName}' encountered an error during loading:`, error);
+            }
+        }
+    }
+
+    if (!moduleLoaded) {
+        // Handle case where module either couldn't be found in both paths or had syntax errors
+        console.log(`Extension '${extensionName}' has no server-side code or contains errors.`);
+        return false;
+    }
+
+    // Proceed with module loading or additional logic here
+    // Since moduleLoaded is true, the module is found and has no syntax errors
+}
+
+
 	
-	if (mode == 0) {
-		fullPath = paths[0];
-		try {
-			require.resolve(fullPath);
-		}
-		catch (error) {
-			fullPath = paths[1];
-			try {
-				require.resolve(fullPath);
-			}
-			catch (error) {
-				if (debugMode > 2) {
-					console.error("Extension '"+extensionName+"' has no server-side code:", error);
-				} else if (debugMode) {
-					console.log("Extension '"+extensionName+"' has no server-side code.");
-				}
-				return false;
-			}
-		}
-	} 
 	if (mode == 1) {
 		extensionExists = false;
 		var menuPath = null;
